@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title id="abiaoti">管理</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<script type="text/javascript" src="../static/Convert_Pinyin.js"></script>
+
+	<style type="text/css">
+		body {
+			background: RGB(245, 245, 245);
+		}
+		
+		table {
+			background: white;
+		}
+		
+		.header {
+			background: RGB(237, 237, 237);
+		}
+		
+		#content {
+			background: white;
+		}
+		
+		#tab1 {}
+		
+		tr {
+			border-top: 1px solid #f00;
+			border-bottom: 1px solid #f00;
+			/*color: red;*/
+		}
+		
+		td {
+			text-align: center;
+		}
+		
+		td input {
+			text-align: center;
+		}
+		
+		tr {}
+		
+		tr:hover {
+			background: RGB(231, 245, 255);
+		}
+		
+		tr input {
+			background: transparent;
+		}
+		
+		#map {
+			height: 100%;
+			width: 100%;
+			position: absolute;
+			top: 0px;
+			bottom: 0px;
+			z-index: 0;
+			overflow: hidden;
+			word-break: break-all;
+			background: black;
+			opacity: 0.3;
+		}
+		
+		#center {
+			top: 100px;
+			bottom: 100px;
+			width: 50%;
+			position: absolute;
+			background: white;
+			opacity: 1;
+			margin-left: auto;
+			margin-right: auto;
+			position: fixed;
+			margin: auto;
+			left: 0;
+			right: 0;
+			top: 100px;
+			overflow: scroll;
+			bottom: 0;
+			height: 300px;
+			/*left: 390px;*/
+		}
+		
+		.btn {
+			background: RGB(239, 100, 98);
+			color: white;
+			padding: 5px 10px 5px 10px;
+		}
+		
+		.btnbtn {
+			background: RGB(239, 100, 98);
+			color: white;
+			padding: 5px 10px 5px 10px;
+		}
+		
+		.add {
+			margin-top: 20px;
+			margin-left: 20px;
+		}
+		
+		.add input {
+			margin-left: 20px;
+		}
+		
+		#nian {
+			width: 50px;
+		}
+		
+		#yue {
+			width: 50px;
+		}
+		
+		textarea {
+			width: 400px;
+			height: 150px;
+			overflow: scroll;
+			margin-left: 20px;
+		}
+		
+		.atitle {
+			margin: auto;
+			margin-right: auto;
+			display: block;
+		}
+	</style>
+	<script type="text/javascript" src="/static/jquery-2.1.4.js"></script>
+	<script type="text/javascript" src="/static/jquery.form.js"></script>
+	<script type="text/javascript" src="../static/wangEditor.min.js"></script>
+
+</head>
+
+<body>
+	<!--<input type="button" onclick="addTr()" value="添加" />-->
+	<!--<img src="../image/logo.png" />-->
+	<!--<input type="button" onclick="save()" value="新增" style="width: 100px;height: 60px;color: red;font-size: 22px;margin-bottom: 20px;" />-->
+	<!--<input type="button" onclick="tuichu()" value="退出" style="width: 100px;height: 60px;color: red;font-size: 22px;margin-bottom: 20px;right: 20px;position: absolute;top: 25px;" />-->
+	<div style="padding: 20px;" id="content">
+
+		<div style="height: 40px;text-align: center;">
+			<p class="atitle"></p>
+			<input type="button" onclick="xinzengxinwen()" value="新增" style="float: left;background: RGB(239, 100, 98);color: white;    padding: 5px 10px 5px 10px;" />
+		</div>
+		<div style="height: 400px;overflow: scroll;clear: both;">
+			<table id="tab" cellpadding="0" cellspacing="0" width="100%">
+				<tr>
+
+				</tr>
+			</table>
+		</div>
+	</div>
+	<div id="map" style="display: none;">
+
+	</div>
+	<div id="center" style="display: none;">
+		<div class="add">
+			<input type="button" name="" id="addOk" value="确定" class="btn" />
+			<input type="button" name="" id="xiugaibtn" value="修改" class="btn" style="display: none;" />
+			<input type="button" name="" id="cancel" value="取消" class="btn" />
+		</div>
+	</div>
+	<div id="fugai" style="background: RGBA(0, 0, 0, 0.3);height: 300px;line-height: 300px;color: white;text-align: center;font-size: 29px;position: fixed;top: 100px;left: 100px;padding: 10px;display: none;">图片上传中 请勿操作</div>
+
+	<script type="text/javascript">
+		var tfuwenbenEditor
+
+		function GetQueryString(name) {
+			var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+			var r = window.location.search.substr(1).match(reg);
+			if(r != null) return unescape(r[2]);
+			return null;
+		}
+		$('#abiaoti').html(window.localStorage.getItem('name'))
+		$('.atitle').html(window.localStorage.getItem('name'))
+
+		var str = window.localStorage.getItem('data');
+		var alist = JSON.parse(str)
+		console.log(str)
+		console.log(alist)
+
+		for(var i = 0; i < alist.length; i++) {
+			if(alist[i]['name'].indexOf("图片") != -1 || alist[i]['name'].indexOf("头像") != -1) {
+				$('#center').append('<form action="/uploadfile" method="post" enctype="multipart/form-data" id="form' + alist[i]['key'] + '"><div class="add"><span>' + alist[i]['name'] + '</span><input placeholder="请输入' + alist[i]['name'] + '" id="' + alist[i]['key'] + '" name="the_file" type="file"/></div></form>')
+
+				continue
+			}
+			if(alist[i]['name'].indexOf("富文本") != -1 || alist[i]['name'] == '正文') {
+				$('#center').append('<div id="' + alist[i]['key'] + '1" class="toolbar"></div>')
+				$('#center').append('<div class="form-group">' +
+					'<label for="user_id" class="col-sm-3 control-label">' + alist[i]['name'] + '</label>' +
+					'<div class="col-sm-9">' +
+					'<div class="text" id="' + alist[i]['key'] + '2" name="' + alist[i]['key'] + '2">' +
+					'</div>' +
+					'</div>' +
+					'</div>')
+				var E = window.wangEditor
+
+				tfuwenbenEditor = new E('#' + alist[i]['key'] + '1', '#' + alist[i]['key'] + '2')
+					// 自定义菜单配置
+					tfuwenbenEditor.customConfig.menus = [
+					'head',
+					'bold',
+					'italic',
+					'image',
+						// 		    'head',  // 标题
+						// 'bold',  // 粗体
+						// 'fontSize',  // 字号
+						// 'fontName',  // 字体
+						// 'italic',  // 斜体
+						// 'underline',  // 下划线
+						// 'strikeThrough',  // 删除线
+						// 'foreColor',  // 文字颜色
+						// 'backColor',  // 背景颜色
+						// 'link',  // 插入链接
+						// 'list',  // 列表
+						// 'justify',  // 对齐方式
+						// 'quote',  // 引用
+						// 'emoticon',  // 表情
+						// 'image',  // 插入图片
+						// 'table',  // 表格
+						// 'video',  // 插入视频
+						// 'code',  // 插入代码
+						// 'undo',  // 撤销
+						// 'redo'  // 重复
+						]
+
+						tfuwenbenEditor.create()
+					//
+					//					$('.modal-dialog').css('width', '80%')
+					//					$('.modal-dialog').css('margin-left', '50px')
+					continue
+				}
+				if(alist[i]['name'].indexOf("字段类型") != -1) {
+					$('#center').append('<div class="add"><span>' + alist[i]['name'] + '</span><select id="' + alist[i]['key'] + '" name="' + alist[i]['key'] + '"><option>文本</option><option>文件</option></select></div>')
+					continue
+				}
+				if(alist[i]['name'].indexOf("是否") != -1) {
+					$('#center').append('<div class="add"><span>' + alist[i]['name'] + '</span><select id="' + alist[i]['key'] + '" name="' + alist[i]['key'] + '"><option>是</option><option>否</option></select></div>')
+					continue
+				}
+
+				$('#center').append('<div class="add"><span>' + alist[i]['name'] + '</span><input placeholder="请输入' + alist[i]['name'] + '" id="' + alist[i]['key'] + '" name="' + alist[i]['key'] + '"/></div>')
+
+			}
+			$('input[type=file]').change(function() {
+				$('#fugai').css('display', '')
+				nowimgpath = $(this).attr('id')
+				var options = {
+					url: '/uploadfile',
+					type: 'POST',
+					success: showResponse,
+					error: function(xhr, status, err) {
+						$('#fugai').css('display', 'none')
+
+						alert("操作失败");
+					}
+				};
+				//这里可能和官方的不太一样，但是本人用官方Demo代码,始终无法提交
+				$("#form" + nowimgpath).ajaxSubmit(options);
+			})
+			//文件上传后的回调函数
+			//responseText：服务器返回的数据（json字符串）
+			function showResponse(responseText, statusText, xhr, $form) {
+				$('#fugai').css('display', 'none')
+
+				imgurl = JSON.parse(responseText)['path']
+				savedic[nowimgpath] = imgurl
+			}
+
+			function qubianji() {
+				window.open("http://ipaiban.com/bianji.jsp")
+			}
+
+			function getNowFormatDate() {
+				var date = new Date();
+				var seperator1 = "-";
+				var seperator2 = ":";
+				var month = date.getMonth() + 1;
+				var strDate = date.getDate();
+				if(month >= 1 && month <= 9) {
+					month = "0" + month;
+				}
+				if(strDate >= 0 && strDate <= 9) {
+					strDate = "0" + strDate;
+				}
+				var currentdate = date.getFullYear();
+				return currentdate;
+			}
+
+			function getNowFormatDat1e() {
+				var date = new Date();
+				var seperator1 = "-";
+				var seperator2 = ":";
+				var month = date.getMonth() + 1;
+				var strDate = date.getDate();
+				if(month >= 1 && month <= 9) {
+					month = "0" + month;
+				}
+				if(strDate >= 0 && strDate <= 9) {
+					strDate = "0" + strDate;
+				}
+				var currentdate = date.getMonth();
+				return currentdate;
+			}
+
+			$("#nian").val(getNowFormatDate())
+			$("#yue").val(getNowFormatDat1e())
+
+			function qingchu() {
+
+			}
+
+			function shanchusuoyou() {
+				qingchu()
+			}
+
+			$('#xiugaibtn').click(function() {
+				for(var i = 0; i < alist.length; i++) {
+					if($("#" + alist[i]['key']).attr('type') == 'file') {
+						continue
+					}
+					if(alist[i]['name'].indexOf('富文本') != -1 || alist[i]['name'] == '正文') {
+						var akey = pinyin.getFullChars(alist[i]['name'])
+						savedic[akey] = tfuwenbenEditor.txt.html()
+						continue
+					}
+					savedic[alist[i]['key']] = $("#" + alist[i]['key']).val();
+
+				}
+				savedic["database"] = window.localStorage.database;
+				savedic["table"] = window.localStorage.getItem('key');
+
+				$.post('/updatedata', JSON.stringify(savedic), function(d) {
+					alert(JSON.parse(d).msg)
+					location.reload()
+				})
+
+			})
+
+			function tuichu() {
+				window.localStorage.setItem('is', "0")
+				location.href = "index.html";
+			}
+
+			function delTr(obj) { //删除行  
+				$(obj).parent().parent().remove();
+			}
+
+			function addTr() {}
+
+			$("#addOk").click(function() {
+				save()
+			})
+			$("#cancel").click(function() {
+				$("#map").css({
+					"display": "none"
+				})
+				$("#center").css({
+					"display": "none"
+				})
+			})
+			var savedic = {}
+
+			function save() {
+
+				for(var i = 0; i < alist.length; i++) {
+					if(alist[i]['name'].indexOf('图片') != -1) {
+						continue
+					}
+					if(alist[i]['name'].indexOf('富文本') != -1 || alist[i]['name'] == '正文') {
+						var akey = pinyin.getFullChars(alist[i]['name'])
+						savedic[akey] = tfuwenbenEditor.txt.html()
+						continue
+					}
+					savedic[alist[i]['key']] = $("#" + alist[i]['key']).val()
+				}
+				savedic['table'] = window.localStorage.getItem('key')
+				savedic["database"] = window.localStorage.database
+				$.post('/savedata', JSON.stringify(savedic), function(d) {
+					alert(JSON.parse(d).msg)
+					location.reload()
+				})
+
+			}
+			loaddata()
+			var biglist = []
+
+			function loaddata() {
+
+				$("#tab tr").empty();
+				var astring = '<tr style="height:40px">'
+				for(var i = 0; i < alist.length; i++) {
+					astring = astring + '<td class="header">' + alist[i]['name'] + '</td>'
+				}
+				astring = astring + '<td class="header">操作</td>'
+				$("#tab tr:last").after(astring)
+
+				$.get('/getdata?database=' + window.localStorage.database + '&table=' + window.localStorage.getItem('key'), function(d) {
+					biglist = JSON.parse(d).data
+					// 循环处理查询到的数据
+					for(var i = 0; i < biglist.length; i++) {
+						var object = biglist[i];
+						var newI = i * 100;
+						var astring = '<tr>'
+						if(window.localStorage.getItem('key') == 'apps') {
+							astring = '<tr id="' + object['id'] + '" name="' + object['appName'] + '">'
+						}
+						if(GetQueryString('type') == 'table') {
+							astring = '<tr id="' + object['id'] + '" name="' + object['tablename'] + '">'
+						}
+						for(var j = 0; j < alist.length; j++) {
+							astring = astring + '<td><input value = "' + object[alist[j]['key']] + '" style= "border: 0px;" type="text"/></td>'
+						}
+
+						astring = astring + '<td  width="10%"><input class="btn" type = "button" value="删除" id = "' + object['id'] + '" ><input class="btnbtn" type = "button" value="编辑" index="' + i + '" id = "' + object["id"] + '" ></td></tr>'
+						//							var newI = i * 100;
+						// if(window.localStorage.getItem('role')==object.get('dianhua'){
+							$("#tab tr:last").after(astring)
+
+						// }
+
+					}
+					$('tr').click(function() {
+						if(GetQueryString('type') == 'table') {
+							var blist = [{
+								"name": $(this).attr('name') + '表管理',
+								"key": 'tableDetail' + $(this).attr('id') + '_' + GetQueryString('appid'),
+								"list": ["字段名", "描述", "字段类型"],
+								"idlist": ["tablename", "tabledescription", "ziduanleixing"]
+							}]
+							var adic = blist[0]
+							window.localStorage.setItem('name', adic["name"])
+							window.localStorage.setItem('key', adic["key"])
+							var list = adic["list"];
+							var idlist = adic["idlist"];
+							var dic = []
+							for(var i = 0; i < idlist.length; i++) {
+								dic.push({
+									'name': list[i],
+									'key': idlist[i]
+								})
+							}
+							window.localStorage.setItem('data', JSON.stringify(dic))
+							location.href = "/adminlist.html?type=tableDetail?appid=" + GetQueryString('appid') + '&tbaleid=' + $(this).attr('id')
+							return;
+						}
+						if(window.localStorage.getItem('key') == 'apps') {
+							var blist = [{
+								"name": $(this).attr('name') + '表管理',
+								"key": 'table' + $(this).attr('id'),
+								"list": ["表名", "描述"],
+								"idlist": ["tablename", "tabledescription"]
+							}]
+							var adic = blist[0]
+							window.localStorage.setItem('name', adic["name"])
+							window.localStorage.setItem('key', adic["key"])
+							var list = adic["list"];
+							var idlist = adic["idlist"];
+							var dic = []
+							for(var i = 0; i < idlist.length; i++) {
+								dic.push({
+									'name': list[i],
+									'key': idlist[i]
+								})
+							}
+							window.localStorage.setItem('data', JSON.stringify(dic))
+							location.href = "/adminlist.html?type=table&appid=" + $(this).attr('id')
+
+						}
+					})
+					$("#tab").on("click", ".btn", function() {
+						var obj = $(this);
+						$.get('/deldata?database=' + window.localStorage.database + '&id=' + obj.attr("id") + '&table=' + window.localStorage.getItem('key'), function(d) {
+							alert(JSON.parse(d).msg)
+							location.reload()
+						})
+
+					})
+
+					$("#tab").on("click", ".btnbtn", function() {
+						var obj = $(this);
+						//							alert(obj.attr("id"));
+						var object = biglist[parseInt(obj.attr("index"))];
+						savedic = object
+						//这里加
+
+						window.localStorage.setItem('aint', parseInt(obj.attr("index")));  
+
+						$("#map").css({
+							"display": "block"
+						})
+						$("#center").css({
+							"display": "block"
+						})
+
+						$('#addOk').css({
+							"display": "none"
+						})
+						$('#xiugaibtn').css({
+							"display": "inline"
+						})
+						$('.fileshow').each(function(i, o) {
+							$(o).remove()
+						})
+						for(var j = 0; j < alist.length; j++) {
+							if($("#" + alist[j]['key']).attr('type') == 'file') {
+								var filestringarr = object[alist[j]['key']].split('/')
+								$("#" + alist[j]['key']).after('<a class="fileshow" href="' + object[alist[j]['key']] + '" style="">' + filestringarr[filestringarr.length - 1] + '</a>')
+								continue
+							}
+							if(alist[j]['name'].indexOf("富文本") != -1 || alist[j]['name'] == '正文') {
+								// alert(data[pinyin.getFullChars(fuwenben)])
+								// debugger
+								tfuwenbenEditor.txt.html(object[pinyin.getFullChars(alist[j]['name'])])
+								continue
+
+							}
+							$("#" + alist[j]['key']).val(object[alist[j]['key']])
+						}
+
+					})
+
+				})
+}
+
+$("tr").css({
+	"border-top": "1px solid #f00",
+	"border-bottom": "1px solid #f00"
+})
+
+function xinzengxinwen() {
+
+	$("#map").css({
+		"display": "block"
+	})
+	$("#center").css({
+		"display": "block"
+	})
+}
+$("#map").click(function() {
+	$("#map").css({
+		"display": "none"
+	})
+	$("#center").css({
+		"display": "none"
+	})
+
+})
+</script>
+</body>
+
+</html>

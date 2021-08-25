@@ -1,0 +1,53 @@
+<ul class="menu">
+	<li class="submenu">
+		<a href="userInfo.html">
+			<div>
+				<i class="menu-icon fa fa-th-large"></i>
+				<span class="menu-title">user info</span>
+			</div>
+		</a>
+	</li>
+	<li class="submenu">
+		<a href="table2.html" >
+			<div>
+				<i class="menu-icon fa fa-th-large"></i>
+				<span class="menu-title">blog manage</span>
+			</div>
+		</a>
+	</li>
+	<li class="submenu">
+		<a href="/" >
+			<div>
+				<i class="menu-icon fa fa-th-large"></i>
+				<span class="menu-title">main</span>
+			</div>
+		</a>
+	</li>
+	<li class="submenu">
+		<a href="table3.html" >
+			<div>
+				<i class="menu-icon fa fa-th-large"></i>
+				<span class="menu-title">Collection management</span>
+			</div>
+		</a>
+	</li>
+	<li class="submenu">
+		<a href="/">
+			<div>
+				<i class="menu-icon fa fa-desktop"></i>
+				<span class="menu-title">exit</span>
+			</div>
+		</a>
+	</li>
+</ul>
+<script type="text/javascript">
+	function loadIndex(index){
+		$('.submenu').each(function(i,o){
+			if (i==index) {
+				$(o).find('a').attr('class','active')
+			}else{
+				$(o).find('a').removeClass('active')
+			}
+		})
+	}
+</script>

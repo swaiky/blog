@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>forget password</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<script type="text/javascript" src="../static/login/js/jquery-1.11.1.min.js"></script>
+
+	<link href="../static/login/css/style.css" rel="stylesheet" type="text/css" media="all" />
+	<script type="text/javascript" src="../static/Convert_Pinyin.js"></script>
+	<script type="text/javascript" src="../static/jquery.form.js"></script>
+
+</head>
+<body>
+
+	<div class="main">
+		<h1>forget password</h1>
+		<div class="w3_login">
+			<div class="w3_login_module">
+				<div class="module form-module">
+				<!-- 	<div class="toggle">
+						<i class="fa fa-times fa-pencil"></i>
+						<div class="tooltip">点击切换</div>
+					</div> -->
+					<div class="form" >
+						
+					</div>
+					<div class="form">
+						<h2>forget password</h2>
+						<form id="zhuce">
+							<input type="text" name="ZhangHao" id="ZhangHao" placeholder="username" required=" " />
+							<input type="password" name="MiMa" id="MiMa" placeholder="new password" required=" " />
+							<input type="email" id="YouXiang" name="YouXiang" placeholder="email" required=" " />
+							<input type="text" id="DianHua" name="DianHua" placeholder="phone" required=" " />
+							<input type="button" value="find" onclick="zhuce()"/>
+						</form>
+					</div>
+					<div class="cta"><a id="wangjimima" style="color: transparent;">forget password?</a></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		var tdic = {}
+var isgo = false
+		$('#wangjimima').click(function(){
+
+		})
+		$('.toggle').click(function(){
+			$(this).children('i').toggleClass('fa-pencil');
+			$('.form').animate({height: "toggle",'padding-top': 'toggle','padding-bottom': 'toggle',opacity: "toggle"}, "slow");
+		});
+
+		var dic = {}
+		var nname = ''
+		function zhuce(){
+			if($('#ZhangHao').val()==''){
+				alert("enter info");
+				return
+			}
+			var a = $("#zhuce").serializeArray()
+			for(var i in a){
+				var d = a[i]
+				dic[d["name"]]=d["value"]
+			}
+			nname=dic["ZhangHao"]
+
+			var dic2 = {}
+			dic2["table"]=pinyin.getFullChars("用户管理")
+			dic2["database"]='admin'
+			$.get('getdata',dic2,function(data){
+				var arr =  JSON.parse(data).data
+				if (arr.length==0) {
+					alert("defualt")
+				}else{
+					for(var i in arr){
+					var d = arr[i]
+					if (d["ZhangHao"]==nname) {
+						
+						if (d["ZhangHao"]==$('#ZhangHao').val()&&d["YouXiang"]==$('#YouXiang').val()) {
+							tdic=d
+							isgo=true
+						}
+						
+					}
+				}
+
+				if(isgo==true){
+					var a = $("#zhuce").serializeArray()
+					dic = tdic
+					for(var i in a){
+						var d = a[i]
+						dic[d["name"]]=d["value"]
+					}
+					dic["table"]=pinyin.getFullChars("用户管理")
+					dic["database"]='admin'
+					var t = JSON.stringify(dic)
+					$.post('updatedata',t,function(data){
+						alert('success')
+						history.back()
+					})
+				}else{
+					alert("error")
+				}
+				}
+				
+
+				
+			})
+
+
+			
+		}
+
+		function denglu(){
+			var a = $("#denglu").serializeArray()
+			dic = {}
+			for(var i in a){
+				var d = a[i]
+				dic[d["name"]]=d["value"]
+			}
+			dic["table"]=pinyin.getFullChars("用户管理")
+			dic["database"]='admin'
+			$.get('getdata',dic,function(data){
+				var arr =  JSON.parse(data).data
+				for(var i in arr){
+					var d = arr[i]
+					if (d["ZhangHao"]==dic["ZhangHao"]&&d["MiMa"]==dic["MiMa"]) {
+						alert("success")
+						location.href="main.html"
+						return
+					}
+				}
+				alert("error")
+			})
+
+		}
+	</script>
+
+</body>
+</html>

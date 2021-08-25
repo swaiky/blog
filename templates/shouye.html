@@ -1,0 +1,185 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="gbk">
+  <title></title>
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../static/shouye/css/base.css" rel="stylesheet">
+  <link href="../static/shouye/css/index.css" rel="stylesheet">
+  <link href="../static/shouye/css/m.css" rel="stylesheet">
+  <script src="../static/shouye/js/jquery.min.js" type="text/javascript"></script>
+  <script type="text/javascript" src="../static/shouye/js/hc-sticky.js"></script>
+  <script type="text/javascript" src="../static/shouye/js/comm.js"></script>
+<!--[if lt IE 9]>
+<script src="../static/shouye/js/modernizr.js"></script>
+<![endif]-->
+</head>
+<body>
+  <header class="header-navigation" id="header">
+    <nav><div class="logo" style="width: 100%"><a href="/">blog</a>
+      <a style="color: blue;font-size: 16px;margin-right: 15px;float: right;" id="zhuxiao">exit</a>
+       <a style="color: blue;font-size: 16px;margin-right: 15px;float: right;" id="geren">user center</a>
+      <a style="color: blue;font-size: 16px;margin-right: 15px;display: none;float: right;" id="denglu">login</a></div>
+<h2 id="mnavh"><span class="navicon"></span></h2>
+<ul id="starlist">
+  <!-- <li><a href="index.html">网站首页</a></li> -->
+     <!--  <li><a href="share.html">我的相册</a></li>
+      <li><a href="list.html">我的日记</a></li>
+      <li><a href="about.html">关于我</a></li>
+      <li><a href="gbook.html">留言</a></li>
+      <li><a href="info.html">内容页</a></li>
+      <li><a href="infopic.html">内容页</a></li> -->
+    </ul>
+  </nav>
+</header>
+<article>
+  <aside>
+    <div class="l_box" id="stickMe">
+      <div class="search">
+        <form name="searchform" id="searchform">
+          <input name="keyboard" id="keyboard" class="input_text" value="Title or author" style="color: rgb(153, 153, 153);" onfocus="if(value=='Title or author'){this.style.color='#000';value=''}" onblur="if(value==''){this.style.color='#999';value='Title or author'}" type="text">
+          <input name="show" value="title" type="hidden">
+          <input name="tempid" value="1" type="hidden">
+          <input name="tbname" value="news" type="hidden">
+          <input name="Submit" class="input_submit" value="search" id="sousuo" style="text-align: right;width: 50px" />
+        </form>
+      </div>
+
+
+
+      <div class="fenlei">
+        <h2>Article classification</h2>
+        <ul id="fenlei">
+
+        </ul>
+      </div>
+
+
+    </div>
+  </aside>
+  <div class="r_box">
+
+  </div>
+</article>
+<div style="position: fixed;bottom: 0px;left: 0px;width: 100%;text-align: center;background: white;line-height: 40px">
+  <a href="030323372925.html">Contact information</a>
+  <a href="030323361110.html">Privacy policy</a>
+  <a href="030323380967.html">Disclaimers</a>
+</div>
+
+<a href="#" class="cd-top">Top</a>
+<script type="text/javascript">
+
+$('#geren').click(function(){
+  location.href='/userInfo.html'
+
+})
+$('#denglu').click(function(){
+  location.href='/login.html'
+
+})
+
+$('#zhuxiao').click(function(){
+  window.localStorage.removeItem('nowinfor')
+  location.href='/'
+})
+if(window.localStorage.nowinfor){
+  $('#zhuxiao').css('display','inline-block')
+  $('#geren').css('display','inline-block')
+  $('#denglu').css('display','none')
+
+}else{
+  $('#zhuxiao').css('display','none')
+  $('#geren').css('display','none')
+  $('#denglu').css('display','inline-block')
+}
+
+$.get('getdata?database=admin&table=WenZhangGuanLi',function(data){
+    var arr= JSON.parse(data).data
+  var dic = {}
+  for(var i in arr){
+    if(dic[arr[i]["FenLei"]]==undefined){
+      dic[arr[i]["FenLei"]]=1
+
+    }else{
+      dic[arr[i]["FenLei"]]=parseInt(dic[arr[i]["FenLei"]])+1
+    }
+    var t = arr[i].ZhuanZai=="是"?"【Reprint】":""
+    $('.r_box').append(' <li><i><a  href="detail.html?id='+arr[i]["id"]+'"><img src="'+arr[i]["FengMianTu"]+'"></a></i>'+
+      '<h3><a href="detail.html?id='+arr[i]["id"]+'">'+arr[i]["ZhuTi"]+'</a><a  href="shouye.html?name='+JSON.parse(arr[i].ZuoZhe).id+'">【'+JSON.parse(arr[i].ZuoZhe).XingMing+'】</a><a>'+(t)+'</a></h3>'+
+      '<p>'+arr[i]["JianJie"]+'</p>'+
+      '</li>')
+  }
+  for(var i in dic){
+    $('#fenlei').append('<li><a onclick="fenlei(\''+i+'\')">'+i+'（'+dic[i]
+      +'）</a></li>')
+  }
+})
+
+
+
+function fenlei(fenlei){
+  $.get('getdata?database=admin&table=WenZhangGuanLi',function(data){
+    var arr= JSON.parse(data).data
+    var dic = {}
+    $('.r_box').html('')
+
+    for(var i in arr){
+      if(dic[arr[i]["FenLei"]]==undefined){
+        dic[arr[i]["FenLei"]]=1
+
+      }else{
+        dic[arr[i]["FenLei"]]=parseInt(dic[arr[i]["FenLei"]])+1
+      }
+
+      if(fenlei!=arr[i]["FenLei"]){
+        continue
+      }
+      $('.r_box').append(' <li><i><a href="/"><img src="'+arr[i]["FengMianTu"]+'"></a></i>'+
+        '<h3><a href="detail.html?id='+arr[i]["id"]+'">'+arr[i]["ZhuTi"]+'</a><a  href="shouye.html?name='+JSON.parse(arr[i].ZuoZhe).id+'">【'+JSON.parse(arr[i].ZuoZhe).XingMing+'】</a></h3>'+
+        '<p>'+arr[i]["JianJie"]+'</p>'+
+        '</li>')
+    }
+    $('#fenlei').html('')
+    for(var i in dic){
+      $('#fenlei').append('<li><a onclick="fenlei(\''+i+'\')">'+i+'（'+dic[i]
+        +'）</a></li>')
+    }
+  })
+}
+
+$('#sousuo').click(function(){
+  $.get('getdata?database=admin&table=WenZhangGuanLi',function(data){
+    var arr= JSON.parse(data).data
+    var dic = {}
+    $('.r_box').html('')
+    for(var i in arr){
+      if(dic[arr[i]["FenLei"]]==undefined){
+        dic[arr[i]["FenLei"]]=1
+
+      }else{
+        dic[arr[i]["FenLei"]]=parseInt(dic[arr[i]["FenLei"]])+1
+      }
+      if (arr[i]["ZhuTi"].indexOf($('#keyboard').val())!=-1||JSON.parse(arr[i].ZuoZhe).XingMing.indexOf($('#keyboard').val())!=-1) {
+
+      }else{
+        continue
+      }
+    var t = arr[i].ZhuanZai=="是"?"【Reprint】":""
+    $('.r_box').append(' <li><i><a  href="detail.html?id='+arr[i]["id"]+'"><img src="'+arr[i]["FengMianTu"]+'"></a></i>'+
+      '<h3><a href="detail.html?id='+arr[i]["id"]+'">'+arr[i]["ZhuTi"]+'</a><a  href="shouye.html?name='+JSON.parse(arr[i].ZuoZhe).id+'">【'+JSON.parse(arr[i].ZuoZhe).XingMing+'】</a><a>'+(t)+'</a></h3>'+
+      '<p>'+arr[i]["JianJie"]+'</p>'+
+      '</li>')
+    }
+    $('#fenlei').html('')
+    for(var i in dic){
+      $('#fenlei').append('<li><a onclick="fenlei(\''+i+'\')">'+i+'（'+dic[i]
+        +'）</a></li>')
+    }
+  })
+})
+</script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>管理</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+	<style type="text/css">
+	.btn {
+		height: 60px;
+		width: 20%;
+		background: RGB(239, 100, 98);
+		color: white;
+		margin: 0 auto;
+		display: block;
+	}
+	
+	.content {
+		margin-top: 20px;
+	}
+ .box {
+          display: flex;  
+          flex-flow:column wrap;
+          height: 100vh;
+        }
+        .item {
+            margin: 10px;
+            width: calc(100%/3 - 20px);
+text-align: center;
+color: white;
+cursor: pointer;
+        }
+</style>
+<script type="text/javascript" src="/static/jquery-2.1.4.js"></script>
+<script type="text/javascript" src="/static/Convert_Pinyin.js"></script>
+
+
+</head>
+<body >
+<div  class="box">
+	
+</div>
+	<script>
+		window.localStorage.database='admin'
+		var arr =[
+		{name:'用户管理',list:"头像、账号、密码、邮箱、电话、性别、民族、籍贯、姓名、年龄、职位、QQ、公司图片"},
+		{name:'文章管理',list:"主题、简介、正文、分类、封面图、发布人、发布时间、转载、作者"},
+		{name:'评论管理',list:"评论人、内容、时间、文章、对象、图片"},
+
+		]
+		var colors = ["RGBA(50, 134, 234, 1)",'RGBA(109, 180, 45, 1)','RGBA(187, 31, 76, 1)','RGBA(19, 145, 34, 1)','RGBA(88, 60, 174, 1)','RGBA(217, 87, 53, 1)']
+		for(var j = 0;j<arr.length;j++){
+			var adic = arr[j];
+			var h  = Math.ceil(Math.random()*10)*10+80;  
+			$('.box').append('<div id="'+j+'" class="item" id="chakan" style="line-height:'+h+'px;height:'+h+'px;background:'+colors[j%colors.length]+'">'+adic['name']+'</div>')
+			$('#'+j).click(function(){
+				var bdic = arr[ $(this).attr('id')]
+				window.localStorage.setItem('name', bdic['name'])
+				window.localStorage.setItem('key', pinyin.getFullChars(bdic['name']))
+				var list = bdic['list'].split('、')
+				var idlist=[]
+				for(var i =0 ;i<list.length;i++){
+					idlist.push(pinyin.getFullChars(list[i]))
+				}
+				var dic = []
+				for(var i = 0; i < idlist.length; i++) {
+					dic.push({
+						'name': list[i],
+						'key': idlist[i]
+					})
+				}
+				window.localStorage.setItem('data', JSON.stringify(dic))
+				location.href = "/adminlist.html"
+			})
+		}
+
+		
+	</script>
+</body>
+
+</html>

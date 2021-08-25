@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>login and regist</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<script type="text/javascript" src="../static/login/js/jquery-1.11.1.min.js"></script>
+
+	<link href="../static/login/css/style.css" rel="stylesheet" type="text/css" media="all" />
+	<script type="text/javascript" src="../static/Convert_Pinyin.js"></script>
+	<script type="text/javascript" src="../static/jquery.form.js"></script>
+
+</head>
+<body>
+
+	<div class="main">
+		<h1>login and regist</h1>
+		<div class="w3_login">
+			<div class="w3_login_module">
+				<div class="module form-module">
+					<div class="toggle">
+						<i class="fa fa-times fa-pencil"></i>
+						<div class="tooltip">change</div>
+					</div>
+					<div class="form" >
+						<h2>acount</h2>
+						<form id="denglu">
+							<input type="text" name="ZhangHao" placeholder="username " required=" " />
+							<input type="password" name="MiMa" placeholder="password" required=" " />
+							<input type="button" value="login" onclick="denglu()"/>
+						</form>
+					</div>
+					<div class="form">
+						<h2>create acount</h2>
+						<form id="zhuce">
+							<input type="text" name="ZhangHao" id="ZhangHao" placeholder="username" required=" " />
+							<input type="password" name="MiMa" id="MiMa" placeholder="password" required=" " />
+							<input type="email" id="YouXiang" name="YouXiang" placeholder="email" required="" />
+							<input type="text" name="DianHua" placeholder="phone" required=" " />
+							<input type="text" name="TouXiang" placeholder="电话" style="display: none;" />
+							<input type="text" name="XingMing" placeholder="姓名" style="display: none;" />
+							<input type="button" value="regist" onclick="zhuce()"/>
+						</form>
+					</div>
+					<div class="cta"><a href="forget.html">forget password?</a></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+
+		$('#wangjimima').click(function(){
+
+		})
+		function isEmail(str){
+			var re=/^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/;
+			if (re.test(str) != true) {
+				return false;
+			}else{
+				return true;
+			}
+		}
+
+		$('.toggle').click(function(){
+			$(this).children('i').toggleClass('fa-pencil');
+			$('.form').animate({height: "toggle",'padding-top': 'toggle','padding-bottom': 'toggle',opacity: "toggle"}, "slow");
+		});
+
+		var dic = {}
+		var nname = ''
+		function zhuce(){
+			if($('#ZhangHao').val()==''||$('#MiMa').val()==''){
+				alert("enter data");
+				return
+			}
+			if ($('#YouXiang').val()) {
+				if (isEmail($('#YouXiang').val())) {
+
+				}else{
+				alert("emaile not correct")
+								return
+
+				}
+			}else{
+				alert("enter data")
+				return
+			}
+			var a = $("#zhuce").serializeArray()
+			for(var i in a){
+				var d = a[i]
+				dic[d["name"]]=d["value"]
+			}
+			nname=dic["ZhangHao"]
+
+			var dic2 = {}
+			dic2["table"]=pinyin.getFullChars("用户管理")
+			dic2["database"]='admin'
+			$.get('getdata',dic2,function(data){
+				var arr =  JSON.parse(data).data
+				for(var i in arr){
+					var d = arr[i]
+					if (d["ZhangHao"]==nname) {
+						alert("用户已存在")
+						return
+					}
+				}
+
+				var a = $("#zhuce").serializeArray()
+				dic = {}
+				for(var i in a){
+					var d = a[i]
+					dic[d["name"]]=d["value"]
+				}
+				dic["table"]=pinyin.getFullChars("用户管理")
+				dic["database"]='admin'
+				var t = JSON.stringify(dic)
+				$.post('savedata',t,function(data){
+					alert('success')
+					location.reload()
+				})
+			})
+
+
+			
+		}
+
+		function denglu(){
+			var a = $("#denglu").serializeArray()
+			dic = {}
+			for(var i in a){
+				var d = a[i]
+				dic[d["name"]]=d["value"]
+			}
+			dic["table"]=pinyin.getFullChars("用户管理")
+			dic["database"]='admin'
+			$.get('getdata',dic,function(data){
+				var arr =  JSON.parse(data).data
+				for(var i in arr){
+					var d = arr[i]
+					if (d["ZhangHao"]==dic["ZhangHao"]&&d["MiMa"]==dic["MiMa"]) {
+						window.localStorage.nowuser = JSON.stringify(dic)
+						window.localStorage.nowinfor=JSON.stringify(dic)
+						alert("success")
+						location.href="userInfo.html"
+						return
+					}
+				}
+				alert("账号或密码错误")
+			})
+
+		}
+	</script>
+
+</body>
+</html>
